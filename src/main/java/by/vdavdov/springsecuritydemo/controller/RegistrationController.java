@@ -2,18 +2,18 @@ package by.vdavdov.springsecuritydemo.controller;
 
 import by.vdavdov.springsecuritydemo.entity.User;
 import by.vdavdov.springsecuritydemo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping
 public class RegistrationController {
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
 
     @GetMapping("/registration")
     public String registration(Model model) {

@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Главная</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div>
+    <h3 th:if="${#authentication.principal}" th:text="${#authentication.principal.username}"></h3>
+    <div th:if="${not #authorization.expression('isAuthenticated()')}">
+        <h4><a th:href="@{/login}">Войти</a></h4>
+        <h4><a th:href="@{/registration}">Зарегистрироваться</a></h4>
+    </div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <h4><a th:href="@{/logout}">Выйти</a></h4>
+    </div>
+    <h4><a th:href="@{/news}">Новости (только пользователь)</a></h4>
+    <h4><a th:href="@{/admin}">Пользователи (только админ)</a></h4>
+</div>
+</body>
+</html>

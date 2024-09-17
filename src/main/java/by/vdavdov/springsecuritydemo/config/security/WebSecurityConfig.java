@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -22,23 +24,33 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeRequests()
-                .requestMatchers("/registration").not().fullyAuthenticated()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/news").hasRole("USER")
-                .requestMatchers("/", "/resources/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll()
-                .logoutSuccessUrl("/");
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll())
+                .sessionManagement(session -> session
+                        .invalidSessionUrl("/login?invalid-session")
+                        .maximumSessions(1) // Максимальное количество сессий на одного пользователя
+                        .maxSessionsPreventsLogin(true)) // Предотвращает вход новых пользователей, если максимальное количество сессий достигнуто
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/registration").not().fullyAuthenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/news").hasRole("USER")
+                        .requestMatchers("/", "/resources/**").permitAll()
+                        .anyRequest().authenticated())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout") // URL, куда будут перенаправлены пользователи после выхода
+                        .permitAll());
 
         return http.build();
+    }
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoderConfig.bCryptPasswordEncoder());
+        return authProvider;
     }
 
     @Autowired

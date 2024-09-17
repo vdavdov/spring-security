@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Log in with your account</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>UserName</th>
+            <th>Password</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${allUsers}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.password}"></td>
+            <td>
+                <span th:each="role : ${user.roles}" th:text="${role.name} + '; '"></span>
+            </td>
+            <td>
+                <form th:action="@{/admin}" method="post">
+                    <input type="hidden" name="userId" th:value="${user.id}"/>
+                    <input type="hidden" name="action" value="delete"/>
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/}">Главная</a>
+</div>
+</body>
+</html>

@@ -1,27 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
+    <meta charset="utf-8">
+    <title>Log in with your account</title>
 </head>
 <body>
-
-<form method="post" action="/login">
-    <h2>Войти в аккаунт</h2>
-    <div>
-        <label>
-            <input name="username" type="text" placeholder="Username"/>
-        </label>
-        <label>
-            <input name="password" type="text" placeholder="Password"/>
-        </label>
-        <button type="submit">Login</button>
-        <h4><a href="/registration">Зарегистрироваться</a></h4>
-    </div>
-</form>
-
+<div th:if="${#authorization.expression('isAuthenticated()')}">
+    <script th:inline="javascript">
+        window.location.href = "/";
+    </script>
+</div>
+<div>
+    <form th:action="@{/login}" method="POST">
+        <h2>Вход в систему</h2>
+        <div>
+            <input name="username" type="text" placeholder="Username" autofocus="true" />
+            <input name="password" type="password" placeholder="Password" />
+            <button type="submit">Log In</button>
+        </div>
+        <h4><a th:href="@{/registration}">Зарегистрироваться</a></h4>
+    </form>
+</div>
 </body>
 </html>

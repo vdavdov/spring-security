@@ -34,7 +34,6 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
         return user;
     }
 
@@ -69,7 +68,6 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
+        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class).setParameter("paramId", idMin).getResultList();
     }
 }
